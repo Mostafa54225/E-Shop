@@ -2,7 +2,7 @@ using Core.Interfaces;
 using Core.Models.Product;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Data
+namespace Infrastructure.Data.Repositories
 {
     public class ProductRepo : IProductRepo
     {
@@ -13,19 +13,20 @@ namespace Infrastructure.Data
             _context = context;
         }
 
-        public async Task<IReadOnlyList<ProductBrand>> GetProductBrands()
-        {
-            return await _context.ProductBrands.ToListAsync();
-        }
 
+
+        public async Task<IReadOnlyList<Product>> GetProducts()
+        {
+            return await _context.Products.Include(p => p.ProdcutType).Include(p => p.ProductBrand).ToListAsync();
+        }
         public async Task<Product> GetProductById(int id)
         {
             return await _context.Products.Include(p => p.ProductBrand).Include(p => p.ProdcutType).FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<IReadOnlyList<Product>> GetProducts()
+        public async Task<IReadOnlyList<ProductBrand>> GetProductBrands()
         {
-            return await _context.Products.Include(p => p.ProdcutType).Include(p => p.ProductBrand).ToListAsync(); 
+            return await _context.ProductBrands.ToListAsync();
         }
 
         public async Task<IReadOnlyList<ProdcutType>> GetProductTypes()
